@@ -119,7 +119,7 @@ jobs:
                   file_parts: ["file"]
                 }')
 
-              curl -sf -X POST "https://api.modrinth.com/v2/version" \
+              curl -X POST "https://api.modrinth.com/v2/version" \
                 -H "Authorization: ${MODRINTH_TOKEN}" \
                 -F "data=${DATA}" \
                 -F "file=@${JAR}"
