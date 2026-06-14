@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraftemotecraft.recording.actions;
 
-import com.zigythebird.playeranimcore.animation.Animation;
+import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import fr.loudo.narrativecraft.api.playback.IPlaybackContext;
 import fr.loudo.narrativecraft.api.playback.IPlaybackSession;
 import fr.loudo.narrativecraft.api.recording.action.AbstractAction;
@@ -17,9 +17,9 @@ public class PlayEmoteAction extends AbstractAction {
 
     public static final String ID = "emotecraft-play-animation";
 
-    private Animation animation;
+    private KeyframeAnimation animation;
 
-    public PlayEmoteAction(int tick, Animation animation) {
+    public PlayEmoteAction(int tick, KeyframeAnimation animation) {
         super(tick);
         this.animation = animation;
     }
@@ -30,7 +30,7 @@ public class PlayEmoteAction extends AbstractAction {
 
     @Override
     public void write(Writer writer) throws IOException {
-        writer.addUUID(animation.uuid());
+        writer.addUUID(animation.getUuid());
     }
 
     @Override

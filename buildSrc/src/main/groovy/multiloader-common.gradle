@@ -37,10 +37,6 @@ repositories {
         name = 'kosmx'
         url = 'https://maven.kosmx.dev/'
     }
-    maven {
-        name = 'Redlance'
-        url = "https://repo.redlance.org/public"
-    }
 }
 
 sourcesJar {

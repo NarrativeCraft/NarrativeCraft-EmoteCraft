@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraftemotecraft.inkTag;
 
-import com.zigythebird.playeranimcore.animation.Animation;
+import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
+import dev.kosmx.playerAnim.core.util.UUIDMap;
 import fr.loudo.narrativecraft.api.NarrativeCraftAPI;
 import fr.loudo.narrativecraft.api.inkAction.InkAction;
 import fr.loudo.narrativecraft.api.inkAction.InkActionResult;
@@ -14,8 +15,6 @@ import fr.loudo.narrativecraft.api.narrative.scene.IScene;
 import fr.loudo.narrativecraft.api.session.IPlayerSession;
 import fr.loudo.narrativecraftemotecraft.mixin.PlayerListFields;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
-import io.github.kosmx.emotes.common.tools.UUIDMap;
-import io.github.kosmx.emotes.mc.McUtils;
 import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
 import java.util.Map;
 import java.util.UUID;
@@ -31,7 +30,7 @@ public class EmoteInkAction extends InkAction {
 
     private String action;
     private ICharacter characterStory;
-    private Animation animation;
+    private KeyframeAnimation animation;
 
     @Override
     protected InkActionResult doValidate(ParsedCommand cmd, IScene scene) {
@@ -41,7 +40,7 @@ public class EmoteInkAction extends InkAction {
         }
 
         String emoteName = cmd.getString("emoteName");
-        animation = getEmote(emoteName, UniversalEmoteSerializer.getLoadedEmotes());
+        animation = getEmote(emoteName, UniversalEmoteSerializer.hiddenServerEmotes);
         if (animation == null) {
             return InkActionResult.error(String.format("Emote '%s' does not exists.", emoteName));
         }
@@ -78,9 +77,10 @@ public class EmoteInkAction extends InkAction {
         return InkActionResult.ok();
     }
 
-    private Animation getEmote(String emoteName, UUIDMap<Animation> emotes) {
-        for (Animation animation : emotes) {
-            String name = McUtils.fromJson(animation.data().getRaw("name")).getString();
+    private KeyframeAnimation getEmote(String emoteName, UUIDMap<KeyframeAnimation> emotes) {
+        for (KeyframeAnimation animation : emotes) {
+            String name = animation.getName();
+            name = name.replace("\"", "");
             if (name.equalsIgnoreCase(emoteName)) {
                 return animation;
             }
