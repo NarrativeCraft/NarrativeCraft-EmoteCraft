@@ -48,13 +48,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: fabric-${{ matrix.mc_version }}
-          path: fabric/build/libs/narrativecraft-fabric-${{ matrix.mc_version }}-${{ env.MOD_VERSION }}.jar
+          path: fabric/build/libs/narrativecraft_emotecraft-fabric-${{ matrix.mc_version }}-${{ env.MOD_VERSION }}.jar
 
       - name: Upload neoforge jar
         uses: actions/upload-artifact@v4
         with:
           name: neoforge-${{ matrix.mc_version }}
-          path: neoforge/build/libs/narrativecraft-neoforge-${{ matrix.mc_version }}-${{ env.MOD_VERSION }}.jar
+          path: neoforge/build/libs/narrativecraft_emotecraft-neoforge-${{ matrix.mc_version }}-${{ env.MOD_VERSION }}.jar
 
   release:
     name: GitHub Release & Modrinth
@@ -94,12 +94,12 @@ jobs:
           for MC_VERSION in 26.1.2 1.21.1; do
             for LOADER in fabric neoforge; do
               LOADER_DISPLAY="${LOADER^}"
-              JAR="artifacts/${LOADER}-${MC_VERSION}/narrativecraft-${LOADER}-${MC_VERSION}-${MOD_VERSION}.jar"
+              JAR="artifacts/${LOADER}-${MC_VERSION}/narrativecraft_emotecraft-${LOADER}-${MC_VERSION}-${MOD_VERSION}.jar"
 
                DEPS='[{"project_id": "bR35WQGQ", "dependency_type": "required"},{"project_id": "pZ2wrerK", "dependency_type": "required"}]'
 
               DATA=$(jq -n \
-                --arg name "NarrativeCraft - ${LOADER_DISPLAY} - ${MOD_VERSION} - ${MC_VERSION}" \
+                --arg name "NarrativeCraft-EmoteCraft - ${LOADER_DISPLAY} - ${MOD_VERSION} - ${MC_VERSION}" \
                 --arg version "${MOD_VERSION}-${LOADER}-${MC_VERSION}" \
                 --arg changelog "${CHANGELOG}" \
                 --arg mc_version "${MC_VERSION}" \
@@ -119,7 +119,7 @@ jobs:
                   file_parts: ["file"]
                 }')
 
-              curl -X POST "https://api.modrinth.com/v2/version" \
+              curl -sf -X POST "https://api.modrinth.com/v2/version" \
                 -H "Authorization: ${MODRINTH_TOKEN}" \
                 -F "data=${DATA}" \
                 -F "file=@${JAR}"
