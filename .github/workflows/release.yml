@@ -1,0 +1,129 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    name: Build MC ${{ matrix.mc_version }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - branch: 26.1.2
+            mc_version: 26.1.2
+          - branch: 1.21.1
+            mc_version: 1.21.1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+          fetch-depth: 0
+
+      - name: Extract variables
+        run: |
+          echo "MOD_VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+          echo "JAVA_VERSION=$(grep '^java_version=' gradle.properties | cut -d= -f2)" >> $GITHUB_ENV
+
+      - name: Setup Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4.4.4
+
+      - name: Build jars
+        run: ./gradlew :fabric:build :neoforge:build -Pversion=${{ env.MOD_VERSION }}
+
+      - name: Upload fabric jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: fabric-${{ matrix.mc_version }}
+          path: fabric/build/libs/narrativecraft-fabric-${{ matrix.mc_version }}-${{ env.MOD_VERSION }}.jar
+
+      - name: Upload neoforge jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: neoforge-${{ matrix.mc_version }}
+          path: neoforge/build/libs/narrativecraft-neoforge-${{ matrix.mc_version }}-${{ env.MOD_VERSION }}.jar
+
+  release:
+    name: GitHub Release & Modrinth
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract variables
+        run: |
+          MOD_VERSION="${GITHUB_REF_NAME#v}"
+          echo "MOD_VERSION=${MOD_VERSION}" >> $GITHUB_ENV
+          CHANGELOG=$(awk "/^## \[${MOD_VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md)
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$CHANGELOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ env.CHANGELOG }}
+          files: artifacts/**/*.jar
+
+      - name: Publish to Modrinth
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        run: |
+          for MC_VERSION in 26.1.2 1.21.1; do
+            for LOADER in fabric neoforge; do
+              LOADER_DISPLAY="${LOADER^}"
+              JAR="artifacts/${LOADER}-${MC_VERSION}/narrativecraft-${LOADER}-${MC_VERSION}-${MOD_VERSION}.jar"
+
+               DEPS='[{"project_id": "bR35WQGQ", "dependency_type": "required"},{"project_id": "pZ2wrerK", "dependency_type": "required"}]'
+
+              DATA=$(jq -n \
+                --arg name "NarrativeCraft - ${LOADER_DISPLAY} - ${MOD_VERSION} - ${MC_VERSION}" \
+                --arg version "${MOD_VERSION}-${LOADER}-${MC_VERSION}" \
+                --arg changelog "${CHANGELOG}" \
+                --arg mc_version "${MC_VERSION}" \
+                --arg loader "${LOADER}" \
+                --argjson deps "${DEPS}" \
+                '{
+                  name: $name,
+                  version_number: $version,
+                  changelog: $changelog,
+                  dependencies: $deps,
+                  game_versions: [$mc_version],
+                  version_type: "release",
+                  environment: "client_and_server",
+                  loaders: [$loader],
+                  featured: true,
+                  project_id: "E9tWQy1I",
+                  file_parts: ["file"]
+                }')
+
+              curl -sf -X POST "https://api.modrinth.com/v2/version" \
+                -H "Authorization: ${MODRINTH_TOKEN}" \
+                -F "data=${DATA}" \
+                -F "file=@${JAR}"
+
+              echo "Published ${LOADER_DISPLAY} ${MC_VERSION} to Modrinth"
+            done
+          done
