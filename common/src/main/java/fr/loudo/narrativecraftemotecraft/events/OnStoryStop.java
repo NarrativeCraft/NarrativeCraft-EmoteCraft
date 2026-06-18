@@ -3,9 +3,7 @@ package fr.loudo.narrativecraftemotecraft.events;
 import fr.loudo.narrativecraft.api.events.EventListener;
 import fr.loudo.narrativecraft.api.events.story.StoryEndEvent;
 import fr.loudo.narrativecraft.api.narrative.IStoryHandler;
-import fr.loudo.narrativecraftemotecraft.mixin.PlayerListFields;
-import java.util.Map;
-import java.util.UUID;
+import fr.loudo.narrativecraftemotecraft.Util;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -18,9 +16,7 @@ public class OnStoryStop implements EventListener<StoryEndEvent> {
         for (Entity entity : storyHandler.getCharacterEntities().values()) {
             if (!(entity instanceof ServerPlayer player)) continue;
 
-            Map<UUID, ServerPlayer> playerMap =
-                    ((PlayerListFields) player.level().getServer().getPlayerList()).getPlayersByUUID();
-            playerMap.remove(player.getUUID());
+            Util.removePlayerId(player, player.level().getServer());
         }
     }
 }

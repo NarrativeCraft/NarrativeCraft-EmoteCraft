@@ -4,11 +4,9 @@ import fr.loudo.narrativecraft.api.playback.IPlaybackContext;
 import fr.loudo.narrativecraft.api.playback.IPlaybackSession;
 import fr.loudo.narrativecraft.api.recording.action.AbstractAction;
 import fr.loudo.narrativecraft.api.recording.action.ActionResult;
-import fr.loudo.narrativecraftemotecraft.mixin.PlayerListFields;
+import fr.loudo.narrativecraftemotecraft.Util;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
 import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
 import net.minecraft.server.level.ServerPlayer;
 
 public class StopEmoteAction extends AbstractAction {
@@ -36,9 +34,7 @@ public class StopEmoteAction extends AbstractAction {
 
         ServerEmoteAPI.forcePlayEmote(player.getUUID(), null);
 
-        Map<UUID, ServerPlayer> playerMap =
-                ((PlayerListFields) player.level().getServer().getPlayerList()).getPlayersByUUID();
-        playerMap.remove(player.getUUID());
+        Util.removePlayerId(player, player.level().getServer());
 
         return ActionResult.OK;
     }

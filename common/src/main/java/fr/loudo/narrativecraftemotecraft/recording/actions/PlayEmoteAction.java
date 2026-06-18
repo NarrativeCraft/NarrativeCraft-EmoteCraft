@@ -5,11 +5,10 @@ import fr.loudo.narrativecraft.api.playback.IPlaybackContext;
 import fr.loudo.narrativecraft.api.playback.IPlaybackSession;
 import fr.loudo.narrativecraft.api.recording.action.AbstractAction;
 import fr.loudo.narrativecraft.api.recording.action.ActionResult;
-import fr.loudo.narrativecraftemotecraft.mixin.PlayerListFields;
+import fr.loudo.narrativecraftemotecraft.Util;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
 import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -49,9 +48,7 @@ public class PlayEmoteAction extends AbstractAction {
         if (animation == null) return ActionResult.ERROR;
         if (!(context.getEntity() instanceof ServerPlayer player)) return ActionResult.IGNORED;
 
-        Map<UUID, ServerPlayer> playerMap =
-                ((PlayerListFields) player.level().getServer().getPlayerList()).getPlayersByUUID();
-        playerMap.put(player.getUUID(), player);
+        Util.addPlayerId(player, player.level().getServer());
 
         ServerEmoteAPI.forcePlayEmote(player.getUUID(), animation);
 

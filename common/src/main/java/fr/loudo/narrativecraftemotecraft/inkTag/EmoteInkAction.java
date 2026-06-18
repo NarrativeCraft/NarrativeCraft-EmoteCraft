@@ -12,13 +12,11 @@ import fr.loudo.narrativecraft.api.narrative.IStoryHandler;
 import fr.loudo.narrativecraft.api.narrative.character.ICharacter;
 import fr.loudo.narrativecraft.api.narrative.scene.IScene;
 import fr.loudo.narrativecraft.api.session.IPlayerSession;
-import fr.loudo.narrativecraftemotecraft.mixin.PlayerListFields;
+import fr.loudo.narrativecraftemotecraft.Util;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
 import io.github.kosmx.emotes.common.tools.UUIDMap;
 import io.github.kosmx.emotes.mc.McUtils;
 import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
-import java.util.Map;
-import java.util.UUID;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -65,9 +63,7 @@ public class EmoteInkAction extends InkAction {
         Entity entity = storyHandler.getEntityFromCharacter(characterStory);
         if (!(entity instanceof ServerPlayer player)) return InkActionResult.ignored();
 
-        Map<UUID, ServerPlayer> playerMap =
-                ((PlayerListFields) player.level().getServer().getPlayerList()).getPlayersByUUID();
-        playerMap.put(player.getUUID(), player);
+        Util.addPlayerId(player, player.level().getServer());
 
         if (action.equals("play")) {
             ServerEmoteAPI.forcePlayEmote(player.getUUID(), animation);
