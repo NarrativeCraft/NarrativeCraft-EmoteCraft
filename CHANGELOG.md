@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.1-1]
+## [1.0.2-1]
 
 ### Fixes
-- Prevent adding player uuid already added
+- Emote not being played because player entity is not updated is player uuid list
