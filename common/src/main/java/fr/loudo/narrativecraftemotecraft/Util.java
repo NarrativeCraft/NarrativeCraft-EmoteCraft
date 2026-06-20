@@ -10,9 +10,11 @@ public class Util {
 
     public static void addPlayerId(ServerPlayer player, MinecraftServer server) {
         Map<UUID, ServerPlayer> playerMap = ((PlayerListFields) server.getPlayerList()).getPlayersByUUID();
-        if (playerMap.containsKey(player.getUUID())) return;
-
-        playerMap.put(player.getUUID(), player);
+        if (playerMap.containsKey(player.getUUID())) {
+            playerMap.replace(player.getUUID(), player);
+        } else {
+            playerMap.put(player.getUUID(), player);
+        }
     }
 
     public static void removePlayerId(ServerPlayer player, MinecraftServer server) {
