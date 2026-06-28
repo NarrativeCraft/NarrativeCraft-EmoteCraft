@@ -5,8 +5,14 @@ plugins {
 
 dependencies {
     compileOnly "fr.loudo.narrativecraft:narrativecraft-api:${nc_version}"
-    compileOnly "io.github.kosmx.emotes:emotesServer:${emotes_version}"
-    compileOnly "io.github.kosmx.emotes:emotesMc:${emotes_version}"
+    compileOnly("io.github.kosmx.emotes:emotesServer:${emotes_version}") {
+        exclude group: 'org.joml'
+        exclude group: 'org.slf4j'
+    }
+    compileOnly("io.github.kosmx.emotes:emotesMc:${emotes_version}") {
+        exclude group: 'org.joml'
+        exclude group: 'org.slf4j'
+    }
 }
 
 neoForge {

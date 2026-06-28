@@ -8,8 +8,14 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
     compileOnly "fr.loudo.narrativecraft:narrativecraft-api:${nc_version}"
-    compileOnly "io.github.kosmx.emotes:emotesServer:${emotes_version}"
-    compileOnly "io.github.kosmx.emotes:emotesMc:${emotes_version}"
+    compileOnly("io.github.kosmx.emotes:emotesServer:${emotes_version}") {
+        exclude group: 'org.joml'
+        exclude group: 'org.slf4j'
+    }
+    compileOnly("io.github.kosmx.emotes:emotesMc:${emotes_version}") {
+        exclude group: 'org.joml'
+        exclude group: 'org.slf4j'
+    }
 
 }
 
@@ -36,7 +42,7 @@ loom {
 
 // Implement mcgradleconventions loader attribute
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
-['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'modCompileClasspath'].each { variant ->
     configurations.named("$variant") {
         attributes {
             attribute(loaderAttribute, 'fabric')
