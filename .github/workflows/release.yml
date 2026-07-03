@@ -15,10 +15,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - branch: 26.1.2
-            mc_version: 26.1.2
+          - branch: 26.2
+            mc_version: 26.2
+            loader: neoforge
           - branch: 1.21.1
             mc_version: 1.21.1
+            loader: neoforge
+          - branch: 1.20.1
+            mc_version: 1.20.1
+            loader: forge
 
     steps:
       - name: Checkout
@@ -42,7 +47,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4.4.4
 
       - name: Build jars
-        run: ./gradlew :fabric:build :neoforge:build -Pversion=${{ env.MOD_VERSION }}
+        run: ./gradlew :fabric:build :${{ matrix.loader }}:build -Pversion=${{ env.MOD_VERSION }}
 
       - name: Upload fabric jar
         uses: actions/upload-artifact@v4
@@ -50,11 +55,11 @@ jobs:
           name: fabric-${{ matrix.mc_version }}
           path: fabric/build/libs/narrativecraft_emotecraft-fabric-${{ matrix.mc_version }}-${{ env.MOD_VERSION }}.jar
 
-      - name: Upload neoforge jar
+      - name: Upload ${{ matrix.loader }} jar
         uses: actions/upload-artifact@v4
         with:
-          name: neoforge-${{ matrix.mc_version }}
-          path: neoforge/build/libs/narrativecraft_emotecraft-neoforge-${{ matrix.mc_version }}-${{ env.MOD_VERSION }}.jar
+          name: ${{ matrix.loader }}-${{ matrix.mc_version }}
+          path: ${{ matrix.loader }}/build/libs/narrativecraft_emotecraft-${{ matrix.loader }}-${{ matrix.mc_version }}-${{ env.MOD_VERSION }}.jar
 
   release:
     name: GitHub Release & Modrinth
@@ -91,39 +96,39 @@ jobs:
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
         run: |
-          for MC_VERSION in 26.1.2 1.21.1; do
-            for LOADER in fabric neoforge; do
-              LOADER_DISPLAY="${LOADER^}"
-              JAR="artifacts/${LOADER}-${MC_VERSION}/narrativecraft_emotecraft-${LOADER}-${MC_VERSION}-${MOD_VERSION}.jar"
+          for COMBO in fabric:26.2 neoforge:26.2 fabric:1.21.1 neoforge:1.21.1 fabric:1.20.1 forge:1.20.1; do
+            LOADER="${COMBO%%:*}"
+            MC_VERSION="${COMBO##*:}"
+            LOADER_DISPLAY="${LOADER^}"
+            JAR="artifacts/${LOADER}-${MC_VERSION}/narrativecraft_emotecraft-${LOADER}-${MC_VERSION}-${MOD_VERSION}.jar"
 
-               DEPS='[{"project_id": "bR35WQGQ", "dependency_type": "required"},{"project_id": "pZ2wrerK", "dependency_type": "required"}]'
+            DEPS='[{"project_id": "bR35WQGQ", "dependency_type": "required"},{"project_id": "pZ2wrerK", "dependency_type": "required"}]'
 
-              DATA=$(jq -n \
-                --arg name "NarrativeCraft-EmoteCraft - ${LOADER_DISPLAY} - ${MOD_VERSION} - ${MC_VERSION}" \
-                --arg version "${MOD_VERSION}-${LOADER}-${MC_VERSION}" \
-                --arg changelog "${CHANGELOG}" \
-                --arg mc_version "${MC_VERSION}" \
-                --arg loader "${LOADER}" \
-                --argjson deps "${DEPS}" \
-                '{
-                  name: $name,
-                  version_number: $version,
-                  changelog: $changelog,
-                  dependencies: $deps,
-                  game_versions: [$mc_version],
-                  version_type: "release",
-                  environment: "client_and_server",
-                  loaders: [$loader],
-                  featured: true,
-                  project_id: "E9tWQy1I",
-                  file_parts: ["file"]
-                }')
+            DATA=$(jq -n \
+              --arg name "NarrativeCraft-EmoteCraft - ${LOADER_DISPLAY} - ${MOD_VERSION} - ${MC_VERSION}" \
+              --arg version "${MOD_VERSION}-${LOADER}-${MC_VERSION}" \
+              --arg changelog "${CHANGELOG}" \
+              --arg mc_version "${MC_VERSION}" \
+              --arg loader "${LOADER}" \
+              --argjson deps "${DEPS}" \
+              '{
+                name: $name,
+                version_number: $version,
+                changelog: $changelog,
+                dependencies: $deps,
+                game_versions: [$mc_version],
+                version_type: "release",
+                environment: "server_only",
+                loaders: [$loader],
+                featured: true,
+                project_id: "E9tWQy1I",
+                file_parts: ["file"]
+              }')
 
-              curl -sf -X POST "https://api.modrinth.com/v2/version" \
-                -H "Authorization: ${MODRINTH_TOKEN}" \
-                -F "data=${DATA}" \
-                -F "file=@${JAR}"
+            curl -sf -X POST "https://api.modrinth.com/v2/version" \
+              -H "Authorization: ${MODRINTH_TOKEN}" \
+              -F "data=${DATA}" \
+              -F "file=@${JAR}"
 
-              echo "Published ${LOADER_DISPLAY} ${MC_VERSION} to Modrinth"
-            done
+            echo "Published ${LOADER_DISPLAY} ${MC_VERSION} to Modrinth"
           done

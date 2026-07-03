@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.2-1]
+## [1.0.3-1]
 
-### Fixes
-- Emote not being played because player entity is not updated is player uuid list
+- Port to 1.20.1
+- Added emotecraft as depedency
