@@ -29,7 +29,8 @@
         "fabric-api": "*",
         "minecraft": "~${minecraft_version}",
         "java": ">=${java_version}",
-        "narrativecraft": ">=${nc_version}"
+        "narrativecraft": "~2.0.0",
+        "emotecraft": "=2.4.12"
     },
     "suggests": {
         "another-mod": "*"
