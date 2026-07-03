@@ -1,15 +1,15 @@
 package fr.loudo.narrativecraftemotecraft.platform;
 
 import fr.loudo.narrativecraftemotecraft.platform.services.IPlatformHelper;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLLoader;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.FMLLoader;
 
-public class NeoForgePlatformHelper implements IPlatformHelper {
+public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public String getPlatformName() {
 
-        return "NeoForge";
+        return "Forge";
     }
 
     @Override

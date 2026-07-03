@@ -1,5 +1,8 @@
 package fr.loudo.narrativecraftemotecraft.inkTag;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.UUIDMap;
 import fr.loudo.narrativecraft.api.NarrativeCraftAPI;
@@ -16,6 +19,7 @@ import fr.loudo.narrativecraft.api.session.IPlayerSession;
 import fr.loudo.narrativecraftemotecraft.Util;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
 import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -75,12 +79,33 @@ public class EmoteInkAction extends InkAction {
 
     private KeyframeAnimation getEmote(String emoteName, UUIDMap<KeyframeAnimation> emotes) {
         for (KeyframeAnimation animation : emotes) {
-            String name = animation.getName();
+            String name = fromJson(animation.extraData.get("name")).getString();
             name = name.replace("\"", "");
             if (name.equalsIgnoreCase(emoteName)) {
                 return animation;
             }
         }
         return null;
+    }
+
+    private static Component fromJson(String json) {
+        if (json == null) {
+            return Component.literal("");
+        }
+        try {
+            return Component.Serializer.fromJson(JsonParser.parseString(json));
+        } catch (JsonParseException e) {
+            return Component.literal(json);
+        }
+    }
+
+    private static Component fromJson(Object obj) {
+        if (obj == null || obj instanceof String) {
+            return fromJson((String) obj);
+        } else if (obj instanceof JsonElement) {
+            return Component.Serializer.fromJson((JsonElement) obj);
+        } else
+            throw new IllegalArgumentException(
+                    "Can not create Text from " + obj.getClass().getName());
     }
 }
