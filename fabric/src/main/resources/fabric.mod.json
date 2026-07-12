@@ -29,7 +29,7 @@
         "fabric-api": "*",
         "minecraft": "~${minecraft_version}",
         "java": ">=${java_version}",
-        "narrativecraft": "~2.0.0",
+        "narrativecraft": "*",
         "emotecraft": ">=3.4.0-b.build.153"
     },
     "suggests": {
