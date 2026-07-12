@@ -27,7 +27,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "narrativecraft"
 mandatory = true
-versionRange = "[2.0.1,)"
+versionRange = ""
 ordering = "AFTER"
 side = "BOTH"
 [[dependencies.${mod_id}]]
