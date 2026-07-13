@@ -9,6 +9,7 @@ import fr.loudo.narrativecraftemotecraft.Util;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
 import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -36,6 +37,11 @@ public class PlayEmoteAction extends AbstractAction {
     public void read(Reader reader) throws IOException {
         UUID animationId = reader.readUUID();
         animation = UniversalEmoteSerializer.getEmote(animationId);
+    }
+
+    @Override
+    public List<AbstractAction> createRewindSnapshot(IPlaybackContext context, IPlaybackSession session) {
+        return List.of(new StopEmoteAction(tick));
     }
 
     @Override
