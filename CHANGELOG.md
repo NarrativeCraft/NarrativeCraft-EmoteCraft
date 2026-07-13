@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.3-1]
+## [1.0.4-2]
 
-- Port to 1.20.1
-- Added emotecraft as depedency
+- Updated to api version 2 of NarrativeCraft
+- An emote is stopped in the cutscene editor if rewinding
