@@ -30,8 +30,8 @@ ordering = "NONE"
 side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "narrativecraft"
-type="required"
-versionRange = ""
+type = "required"
+versionRange = "[0,)"
 ordering = "AFTER"
 side = "BOTH"
 [[dependencies.${mod_id}]]
