@@ -1,5 +1,5 @@
 # Changelog
 
-## [1.0.5-2]
+## [1.0.5-3]
 
-- Fix version range narrativecraft neoforge
+- Updated to api version 3 of NarrativeCraft
