@@ -32,6 +32,8 @@ public class StopEmoteAction extends AbstractAction {
     public ActionResult execute(IPlaybackContext context, IPlaybackSession session) {
         if (!(context.getEntity() instanceof ServerPlayer player)) return ActionResult.IGNORED;
 
+        Util.addPlayerId(player, player.level().getServer());
+
         ServerEmoteAPI.forcePlayEmote(player.getUUID(), null);
 
         Util.removePlayerId(player, player.level().getServer());

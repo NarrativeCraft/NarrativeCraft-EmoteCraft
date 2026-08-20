@@ -58,6 +58,8 @@ public class PlayEmoteAction extends AbstractAction {
 
         ServerEmoteAPI.forcePlayEmote(player.getUUID(), animation);
 
+        Util.removePlayerId(player, player.level().getServer());
+
         return ActionResult.OK;
     }
 }
