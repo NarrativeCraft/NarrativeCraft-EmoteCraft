@@ -53,7 +53,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 
-    compileOnly "fr.loudo.narrativecraft:narrativecraft-api:${nc_version}"
+    compileOnly "fr.loudo.narrativecraft:narrativecraft-api-${minecraft_version}:${nc_api_version}"
     compileOnly "io.github.kosmx.emotes:emotesServer:${emotes_version}"
 }
 

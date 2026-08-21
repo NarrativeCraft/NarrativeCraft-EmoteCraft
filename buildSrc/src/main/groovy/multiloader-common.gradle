@@ -93,7 +93,7 @@ processResources {
             'forge_loader_version_range' : forge_loader_version_range,
             'credits'                    : credits,
             'java_version'               : java_version,
-            'nc_version'                 : nc_version
+            'nc_api_version'             : nc_api_version
     ]
 
     var jsonExpandProps = expandProps.collectEntries {

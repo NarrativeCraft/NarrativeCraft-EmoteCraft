@@ -21,7 +21,7 @@ dependencies {
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
 
-    compileOnly "fr.loudo.narrativecraft:narrativecraft-api:${nc_version}"
+    compileOnly "fr.loudo.narrativecraft:narrativecraft-api-${minecraft_version}:${nc_api_version}"
     compileOnly "io.github.kosmx.emotes:emotesServer:${emotes_version}"
 }
 
