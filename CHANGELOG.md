@@ -1,7 +1,7 @@
 # Changelog
 
-## [1.0.6-3]
+## [1.0.7-3]
 
-### Fixes
+### Misc
 
-- Crash when recording with another animation
+- Updated NarrativeCraft API version (no break changes)
