@@ -15,7 +15,7 @@ dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.5.3'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.5.3'
-    compileOnly "fr.loudo.narrativecraft:narrativecraft-api:${nc_version}"
+    compileOnly "fr.loudo.narrativecraft:narrativecraft-api-${minecraft_version}:${nc_api_version}"
     compileOnly("io.github.kosmx.emotes:emotesServer:${emotes_version}") {
         exclude group: 'org.joml'
         exclude group: 'org.slf4j'
